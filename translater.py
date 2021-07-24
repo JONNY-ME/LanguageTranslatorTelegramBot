@@ -286,6 +286,9 @@ def main():
 
 	dispatcher.add_handler(CommandHandler('start', start))
 	dispatcher.add_handler(CommandHandler('change_default', change_lang))
+	dispatcher.add_handler(CommandHandler("help", help))
+	dispatcher.add_handler(CommandHandler("users", no_of_users))
+	dispatcher.add_handler(CommandHandler("message", message))
 	dispatcher.add_handler(MessageHandler(Filters.text, func))
 	dispatcher.add_handler(CallbackQueryHandler(button))
 
