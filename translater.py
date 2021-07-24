@@ -169,7 +169,7 @@ def change_lang(update, context):
 			except:
 				break
 		keyboard.append(keyboard_adds)
-	keyboard.append([InlineKeyboardButton("-->", callback_data='-->')])
+	keyboard.append([InlineKeyboardButton("➡️", callback_data='-->')])
 	reply_markup = InlineKeyboardMarkup(keyboard)
 	update.message.reply_text('choose your default language', reply_markup=reply_markup)
 
@@ -196,13 +196,13 @@ def button(update, context):
 	    				break
 	    		keyboard.append(keyboard_adds)
 	    	if pos == 0:
-	    		keyboard.append([InlineKeyboardButton("-->", callback_data='-->')])
+	    		keyboard.append([InlineKeyboardButton("➡️", callback_data='-->')])
 	    	elif pos == ln-1:
-	    		keyboard.append([InlineKeyboardButton("<--", callback_data='<--')])
+	    		keyboard.append([InlineKeyboardButton("⬅️", callback_data='<--')])
 	    	else:
 	    		keyboard.append([
-	    			InlineKeyboardButton("<--", callback_data='<--'),
-	    			InlineKeyboardButton("-->", callback_data='-->')
+	    			InlineKeyboardButton("⬅️", callback_data='<--'),
+	    			InlineKeyboardButton("➡️", callback_data='-->')
 	    			])
 	    	reply_markup = InlineKeyboardMarkup(keyboard)
 	    	query.message.edit_reply_markup(reply_markup)
