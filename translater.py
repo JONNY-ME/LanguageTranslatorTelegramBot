@@ -82,6 +82,7 @@ def load_default(user_id, context):
 	for i in data:
 		lang = i[0]
 	context.user_data['lang'] = lang
+	return lang
 
 
 def get_users():
@@ -231,7 +232,7 @@ def func(update, context):
 			cur = con.cursor()
 			data = cur.execute(com)
 			mess = context.user_data['message']
-			for id, name, _, delt in data:
+			for id, name, _, _, delt in data:
 				out = f"Hello {utils.helpers.mention_html(id, name)}\n"+mess
 				if delt == "NO":
 					try:
