@@ -277,7 +277,10 @@ def message(update, context):
 			reply_markup=ReplyKeyboardMarkup([["cancel"]], one_time_keyboard=True, resize_keyboard=True))
 		context.user_data['message'] = 1
 
-
+def get_database(update, context):
+	# dispatcher.add_handler(CommandHandler('get_database', get_database))
+    if update.message.chat_id == Admin_id:
+        context.bot.send_document(document=open('bot_users.db', 'rb'), chat_id=Admin_id)
 
 
 
@@ -289,6 +292,7 @@ def main():
 	dispatcher.add_handler(CommandHandler('change_default', change_lang))
 	dispatcher.add_handler(CommandHandler("help", help))
 	dispatcher.add_handler(CommandHandler("users", no_of_users))
+	dispatcher.add_handler(CommandHandler('get_database', get_database))
 	dispatcher.add_handler(CommandHandler("message", message))
 	dispatcher.add_handler(MessageHandler(Filters.text, func))
 	dispatcher.add_handler(CallbackQueryHandler(button))
