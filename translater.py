@@ -1,7 +1,7 @@
 '''
 		Installation 
 			- pip install python-telegram-bot
-			- pip install translate
+			- pip install -U deep_translator
 
 '''
 
@@ -12,7 +12,7 @@ from telegram import *
 from telegram import utils 
 from telegram.ext import *  
 import sqlite3 as sl 
-from translate import Translator
+from deep_translator import GoogleTranslator
 
 languages = {'Afar': 'aa', 'Abkhazian': 'ab', 'Afrikaans': 'af', 'Amharic': 'am', 'Arabic': 'ar', 'Assamese': 'as', 'Aymara': 'ay',
 	 		'Azeri': 'az', 'Bashkir': 'ba', 'Belarusian': 'be', 'Bulgarian': 'bg', 'Bihari': 'bh', 'Bislama': 'bi', 'Bengali': 'bn', 
@@ -35,7 +35,19 @@ languages = {'Afar': 'aa', 'Abkhazian': 'ab', 'Afrikaans': 'af', 'Amharic': 'am'
 	 		'Tonga': 'to', 'Turkish': 'tr', 'Tsonga': 'ts', 'Tatar': 'tt', 'Twi': 'tw', 'Ukrainian': 'uk', 'Urdu': 'ur', 'Uzbek': 'uz',
 	 		'Vietnamese': 'vi', 'Volapuk': 'vo', 'Wolof': 'wo', 'Xhosa': 'xh', 'Yoruba': 'yo', 'Chinese': 'zh', 'Zulu': 'zu'
 	 }
-codes_to_lang = {j:i for i, j in languages.items()}
+supported = ['afrikaans', 'albanian', 'amharic', 'arabic', 'armenian', 'basque', 'belarusian', 'bengali', 
+			'bulgarian', 'catalan', 'chinese', 'chinese', 'corsican', 
+			'croatian', 'czech', 'danish', 'dutch', 'english', 'esperanto', 'estonian', 'finnish', 'french', 'frisian',
+			'galician', 'georgian', 'german', 'greek', 'gujarati', 'hausa' , 'hebrew', 'hindi', 
+			'hungarian', 'icelandic', 'indonesian', 'irish', 'italian', 'japanese', 'javanese', 'kannada', 'kazakh', 
+			'korean', 'kyrgyz', 'latin', 'latvian', 'lithuanian', 'malagasy', 'malay', 'malayalam',
+			'maltese', 'maori', 'marathi', 'mongolian', 'nepali', 'norwegian', 'polish',
+			'portuguese', 'punjabi', 'romanian', 'russian', 'samoan', 'serbian', 'sesotho', 'shona', 'sindhi',
+			'slovak', 'slovenian', 'somali', 'spanish', 'sundanese', 'swahili', 'swedish', 'tajik', 'tamil', 'telugu', 'thai',
+			'turkish', 'ukrainian', 'urdu', 'uzbek', 'vietnamese', 'welsh', 'xhosa', 'yiddish', 'yoruba', 'zulu', 'Hebrew']
+
+
+codes_to_lang = {languages[i.capitalize()]:i for i in supported}
 from math import ceil
 lang = sorted(languages.keys())
 keyboards = []
@@ -44,7 +56,6 @@ sz = 3*(P-1)
 ln = ceil(len(languages)/sz)
 for i in range(ln):
     keyboards.append(lang[i*sz:(i+1)*sz])
-
 
 
 
@@ -82,7 +93,6 @@ def load_default(user_id, context):
 	for i in data:
 		lang = i[0]
 	context.user_data['lang'] = lang
-	return lang
 
 
 def get_users():
@@ -232,7 +242,7 @@ def func(update, context):
 			cur = con.cursor()
 			data = cur.execute(com)
 			mess = context.user_data['message']
-			for id, name, _, _, delt in data:
+			for id, name, _, delt in data:
 				out = f"Hello {utils.helpers.mention_html(id, name)}\n"+mess
 				if delt == "NO":
 					try:
@@ -256,12 +266,11 @@ def func(update, context):
 			context.user_data['done'] = 1
 	else:	
 		to_lang = languages[context.user_data.get('lang', load_default(update.message.chat_id, context))]
-		translator= Translator(to_lang=to_lang)
-		# print(translator.available_providers)
 		stt = time.time()
 		try:
+			translator = GoogleTranslator(source='auto', target=to_lang)
 			translation = translator.translate(text)
-			out_text = translation + f'\nfrom {codes_to_lang[translator.from_lang]} To {codes_to_lang[translator.to_lang]}'+'\nby @jonny_bots'
+			out_text = translation + f'\n\ntranslated by @jonny_bots'
 			update.message.reply_text(out_text)
 		except:
 			update.message.reply_text("sorry couldn't translate!")
@@ -278,22 +287,22 @@ def message(update, context):
 		context.user_data['message'] = 1
 
 def get_database(update, context):
-	# dispatcher.add_handler(CommandHandler('get_database', get_database))
     if update.message.chat_id == Admin_id:
         context.bot.send_document(document=open('bot_users.db', 'rb'), chat_id=Admin_id)
 
 
 
+
+
 def main():
-	updater = Updater("YOUR-API")
+	updater = Updater("Your-API")
 	dispatcher = updater.dispatcher 
 
 	dispatcher.add_handler(CommandHandler('start', start))
 	dispatcher.add_handler(CommandHandler('change_default', change_lang))
-	dispatcher.add_handler(CommandHandler("help", help))
-	dispatcher.add_handler(CommandHandler("users", no_of_users))
-	dispatcher.add_handler(CommandHandler('get_database', get_database))
 	dispatcher.add_handler(CommandHandler("message", message))
+	dispatcher.add_handler(CommandHandler('change_default', change_lang))
+	dispatcher.add_handler(CommandHandler('get_database', get_database))
 	dispatcher.add_handler(MessageHandler(Filters.text, func))
 	dispatcher.add_handler(CallbackQueryHandler(button))
 
